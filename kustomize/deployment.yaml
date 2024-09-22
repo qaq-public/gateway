@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-api
+spec:
+  replicas: 1
+  minReadySeconds: 30
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 60
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: gateway-api
+  template:
+    metadata:
+      labels:
+        app: gateway-api
+    spec:
+      imagePullSecrets:
+        - name: imagepullsecret
+      containers:
+        - name: gateway
+          image: blacklee123/gateway-api:2.1.1
+          imagePullPolicy: Always
+          command: ['java']
+          args:
+            - -jar
+            - -Duser.timezone=GMT+8
+            - app.jar
+          ports:
+            - containerPort: 9999
+          env:
+            - name: RSA_PUBLICKEY
+              valueFrom:
+                secretKeyRef:
+                  name: qaq
+                  key: RSA_PUBLICKEY
+            - name: MYSQL_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: qaq
+                  key: MYSQL_SERVER
+            - name: MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: qaq
+                  key: MYSQL_PORT
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: qaq
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qaq
+                  key: MYSQL_PASSWORD
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
+          volumeMounts:
+            - mountPath: /app/application.yaml
+              name: gateway-conf
+              subPath: application.yaml
+      volumes:
+        - name: gateway-conf
+          configMap:
+            name: gateway-conf

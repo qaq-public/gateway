@@ -1,0 +1,24 @@
+server:
+  port: 9999
+  forward-headers-strategy: FRAMEWORK
+spring:
+  sql:
+    init: 
+      mode: always
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    url: jdbc:mysql://${MYSQL_USER:root}:${MYSQL_PASSWORD:qard123}@${MYSQL_SERVER:mysql-svc}:${MYSQL_PORT:3306}/uniauth
+  main:
+    web-application-type: reactive
+rsa:
+  publicKey: ${RSA_PUBLICKEY}
+
