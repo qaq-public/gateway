@@ -5,7 +5,7 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn clean package
 
-FROM azul/zulu-openjdk-alpine:21-jre-headless
+FROM ibm-semeru-runtimes:open-21-jre-jammy
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
