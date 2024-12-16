@@ -1,24 +1,18 @@
 package com.qaq.gateway.component;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.qaq.gateway.jpa.repository.RouteConfigRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
 import org.springframework.stereotype.Repository;
 import org.yaml.snakeyaml.Yaml;
-
-import com.qaq.gateway.jpa.entity.RouteConfig;
-import com.qaq.gateway.jpa.repository.RouteConfigRepository;
-
-import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -47,11 +41,15 @@ public class RouterConfigRepository implements RouteDefinitionRepository {
         List<RouteDefinition> routeDefinitions = new ArrayList<>();
         for (var rule : rules) {
             RouteDefinition routeDefinition = new RouteDefinition();
-            routeDefinition.setId(rule.getRouteId());
+            routeDefinition.setId(rule.getId().toString());
             routeDefinition.setUri(URI.create(rule.getUri()));
             routeDefinition.setPredicates(this.getPredicates(rule.getPredicates()));
             routeDefinition.setFilters(this.getFilters(rule.getFilters()));
-            routeDefinition.setMetadata(this.getMetadata(rule.getMetadata()));
+
+            var meta = this.getMetadata(rule.getMetadata());
+            meta.put("app", rule.getApp());
+            meta.put("uniauth_active", rule.getUniauthActive());
+            routeDefinition.setMetadata(meta);
             var ruleOrder = rule.getRouterOrder();
             if (null != ruleOrder) {
                 routeDefinition.setOrder(ruleOrder);

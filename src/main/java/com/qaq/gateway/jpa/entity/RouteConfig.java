@@ -1,25 +1,20 @@
 package com.qaq.gateway.jpa.entity;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "gateway_route_config")
 public class RouteConfig {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @JsonProperty("route_id")
-    @Column(name = "route_id", unique = true, nullable = false )
-    private String routeId;
 
     @Column(nullable = false)
     private String uri;
@@ -33,6 +28,10 @@ public class RouteConfig {
 
     // yaml
     private String metadata = "";
+
+    private String app;
+
+    private Boolean uniauthActive = true;
 
     @Column(name = "router_order", unique = true)
     private Integer routerOrder;

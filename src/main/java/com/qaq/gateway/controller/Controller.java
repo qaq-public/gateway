@@ -59,17 +59,17 @@ public class Controller {
     }
 
     @GetMapping("/routes/{id}")
-    public Mono<ApiResponse<RouteConfig>> retrieve(@PathVariable Long id, @RequestHeader("X-Gateway-Permission") String permissionStr) {
+    public Mono<ApiResponse<RouteConfig>> retrieve(@PathVariable Integer id, @RequestHeader("X-Gateway-Permission") String permissionStr) {
         var authResult = parseAuthResult(permissionStr);
         if (!authResult.getPermissions().contains(PermissionConstant.PLATFORM_ADMIN)) {
             return Mono.just(new ApiResponse<>(-401, null, "No permission"));
         }
-        var routeConfigOptional = routeConfigRepository.findById(id);
-        return Mono.just(new ApiResponse<>(routeConfigOptional.get()));
+        var routeConfig = routeConfigRepository.findById(id).orElseThrow();
+        return Mono.just(new ApiResponse<>(routeConfig));
     }
 
     @DeleteMapping("/routes/{id}")
-    public Mono<ApiResponse<Long>> destroy(@PathVariable Long id, @RequestHeader("X-Gateway-Permission") String permissionStr) {
+    public Mono<ApiResponse<Integer>> destroy(@PathVariable Integer id, @RequestHeader("X-Gateway-Permission") String permissionStr) {
         var authResult = parseAuthResult(permissionStr);
         if (!authResult.getPermissions().contains(PermissionConstant.PLATFORM_ADMIN)) {
             return Mono.just(new ApiResponse<>(-401, null, "No permission"));
@@ -80,7 +80,7 @@ public class Controller {
     }
 
     @PutMapping("/routes/{id}")
-    public Mono<ApiResponse<RouteConfig>> update(@PathVariable Long id,  @RequestBody RouteConfig routeConfig, @RequestHeader("X-Gateway-Permission") String permissionStr) {
+    public Mono<ApiResponse<RouteConfig>> update(@PathVariable Integer id,  @RequestBody RouteConfig routeConfig, @RequestHeader("X-Gateway-Permission") String permissionStr) {
         var authResult = parseAuthResult(permissionStr);
         if (!authResult.getPermissions().contains(PermissionConstant.PLATFORM_ADMIN)) {
             return Mono.just(new ApiResponse<>(-401, null, "No permission"));
@@ -88,7 +88,6 @@ public class Controller {
         var routeConfigInDb = routeConfigRepository.findById(id).orElseThrow();
         routeConfigInDb.setLastModifyTime(new Date());
         routeConfigInDb.setActive(routeConfig.getActive());
-        routeConfigInDb.setRouteId(routeConfig.getRouteId());
         routeConfigInDb.setUri(routeConfig.getUri());
         routeConfigInDb.setPredicates(routeConfig.getPredicates());
         routeConfigInDb.setFilters(routeConfig.getFilters());

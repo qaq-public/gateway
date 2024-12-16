@@ -29,4 +29,4 @@ release:
 	git push origin $(VERSION)
 
 rollout: build push
-	kubectl rollout restart -n qaq-dev deployment gateway-api
+	kubectl rollout restart -n qaq-dev deployment $(NAME)
