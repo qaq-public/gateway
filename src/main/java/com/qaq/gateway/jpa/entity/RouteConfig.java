@@ -1,4 +1,4 @@
-package com.qaq.gateway.model.entity;
+package com.qaq.gateway.jpa.entity;
 
 import java.util.Date;
 
@@ -24,11 +24,14 @@ public class RouteConfig {
     @Column(nullable = false)
     private String uri;
 
+    // yaml
     @Column(unique = true, nullable = false)
     private String predicates = "";
 
+    // yaml
     private String filters = "";
 
+    // yaml
     private String metadata = "";
 
     @Column(name = "router_order", unique = true)
@@ -37,7 +40,6 @@ public class RouteConfig {
     private Boolean active = true;
 
     @JsonProperty("last_modify_time")
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastModifyTime = new Date();
 
     // 在插入记录之前设置 lastModifyTime

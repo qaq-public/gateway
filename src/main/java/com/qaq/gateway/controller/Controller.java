@@ -19,8 +19,8 @@ import com.qaq.base.exception.UnAuthorizedException;
 import com.qaq.base.model.uniauth.AuthResult;
 import com.qaq.base.response.ApiResponse;
 import com.qaq.gateway.enums.PermissionConstant;
-import com.qaq.gateway.model.entity.RouteConfig;
-import com.qaq.gateway.model.repository.RouteConfigRepository;
+import com.qaq.gateway.jpa.entity.RouteConfig;
+import com.qaq.gateway.jpa.repository.RouteConfigRepository;
 import com.qaq.gateway.scheduler.Scheduler;
 
 import lombok.RequiredArgsConstructor;

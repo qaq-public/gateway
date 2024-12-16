@@ -5,9 +5,9 @@ import com.qaq.base.enums.GatewayHeaderEnum;
 import com.qaq.base.model.uniauth.AuthResult;
 import com.qaq.base.model.uniauth.AuthResultResp;
 import com.qaq.gateway.enums.GatewayErrorEnum;
-import com.qaq.gateway.model.repository.RouteConfigRepository;
+import com.qaq.gateway.jpa.repository.RouteConfigRepository;
 import com.qaq.gateway.utils.Response;
-import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -23,14 +23,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class UniAuthFilter implements GlobalFilter, Ordered {
 
-    @Resource
-    private RouteConfigRepository routeConfigRepository;
-
+    private final RouteConfigRepository routeConfigRepository;
     private final RestTemplate restTemplate = new RestTemplate();
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -46,6 +44,7 @@ public class UniAuthFilter implements GlobalFilter, Ordered {
             Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
             assert route != null;
             var metadata = route.getMetadata();
+            log.debug("metadata: {}", metadata.toString());
 
             var appName = (String) metadata.get("app");
             var userId = getUserId(exchange);

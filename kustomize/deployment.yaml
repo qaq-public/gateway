@@ -23,7 +23,7 @@ spec:
         - name: imagepullsecret
       containers:
         - name: gateway
-          image: blacklee123/gateway-api:2.1.1
+          image: blacklee123/gateway-api:2.2.0
           imagePullPolicy: Always
           command: ['java']
           args:

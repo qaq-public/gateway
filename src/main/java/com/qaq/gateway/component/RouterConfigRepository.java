@@ -13,8 +13,8 @@ import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
 import org.springframework.stereotype.Repository;
 import org.yaml.snakeyaml.Yaml;
 
-import com.qaq.gateway.model.entity.RouteConfig;
-import com.qaq.gateway.model.repository.RouteConfigRepository;
+import com.qaq.gateway.jpa.entity.RouteConfig;
+import com.qaq.gateway.jpa.repository.RouteConfigRepository;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -43,9 +43,9 @@ public class RouterConfigRepository implements RouteDefinitionRepository {
     }
 
     public List<RouteDefinition> getRouteConfigs() {
-        var rules = routeConfigRepository.findAll();
+        var rules = routeConfigRepository.findByActive(true);
         List<RouteDefinition> routeDefinitions = new ArrayList<>();
-        for (RouteConfig rule : rules) {
+        for (var rule : rules) {
             RouteDefinition routeDefinition = new RouteDefinition();
             routeDefinition.setId(rule.getRouteId());
             routeDefinition.setUri(URI.create(rule.getUri()));

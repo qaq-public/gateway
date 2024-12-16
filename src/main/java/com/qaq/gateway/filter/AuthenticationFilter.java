@@ -1,8 +1,5 @@
 package com.qaq.gateway.filter;
 
-import com.qaq.base.enums.GatewayHeaderEnum;
-import com.qaq.gateway.enums.GatewayErrorEnum;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -12,17 +9,20 @@ import org.springframework.web.server.ServerWebExchange;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.qaq.base.component.JWTVerifierComponent;
+import com.qaq.base.enums.GatewayHeaderEnum;
+import com.qaq.gateway.enums.GatewayErrorEnum;
 import com.qaq.gateway.utils.Response;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class AuthenticationFilter implements GlobalFilter, Ordered {
 
-    @Autowired
-    private JWTVerifierComponent jwtVerifierComponent;
+    private final JWTVerifierComponent jwtVerifierComponent;
 
     @Override
     public int getOrder() {

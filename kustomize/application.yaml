@@ -2,7 +2,7 @@ logging:
   level:
     root: WARN
     org.springframework.web: INFO
-    com.qaq.gateway: INFO
+    com.qaq.gateway: DEBUG
 spring:
   jpa:
     show-sql: true
