@@ -96,10 +96,11 @@ public class RouterConfigRepository implements RouteDefinitionRepository {
 
     private Map<String, Object> getMetadata(String text) {
         if (text.isBlank()) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
         Yaml yaml = new Yaml();
-        return yaml.load(text);
+        Map<String, Object> metadata = yaml.load(text);
+        return metadata != null ? metadata : new HashMap<>();
     }
 
 }

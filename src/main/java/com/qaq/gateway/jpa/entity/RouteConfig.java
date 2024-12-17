@@ -1,5 +1,6 @@
 package com.qaq.gateway.jpa.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class RouteConfig {
 
     private String app;
 
+    @JsonProperty("uniauth_active")
     private Boolean uniauthActive = true;
 
     @Column(name = "router_order", unique = true)
@@ -39,6 +41,7 @@ public class RouteConfig {
     private Boolean active = true;
 
     @JsonProperty("last_modify_time")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date lastModifyTime = new Date();
 
     // 在插入记录之前设置 lastModifyTime

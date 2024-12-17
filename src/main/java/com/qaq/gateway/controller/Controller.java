@@ -5,14 +5,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaq.base.exception.UnAuthorizedException;
@@ -38,12 +32,21 @@ public class Controller {
     private final Scheduler scheduler;
 
     @GetMapping("/routes")
-    public Mono<ApiResponse<List<RouteConfig>>> list(@RequestHeader("X-Gateway-Permission") String permissionStr) {
+    public Mono<ApiResponse<List<RouteConfig>>> list(
+            @RequestParam(required = false) String app,
+            @RequestHeader("X-Gateway-Permission") String permissionStr) {
         var authResult = parseAuthResult(permissionStr);
         if (!authResult.getPermissions().contains(PermissionConstant.PLATFORM_ADMIN)) {
             return Mono.just(new ApiResponse<>(-401, new ArrayList<>(), "No permission"));
         }
-        return Mono.just(new ApiResponse<>(routeConfigRepository.findAll()));
+        List<RouteConfig> apps;
+        if (app == null) {
+            apps = routeConfigRepository.findAll(Sort.by(Sort.Order.asc("app"), Sort.Order.desc("lastModifyTime")));
+        } else {
+            apps = routeConfigRepository.findByAppOrderByLastModifyTimeDesc(app);
+        }
+        return Mono.just(new ApiResponse<>(apps));
+
     }
 
     @PostMapping("/routes")
@@ -86,13 +89,14 @@ public class Controller {
             return Mono.just(new ApiResponse<>(-401, null, "No permission"));
         }
         var routeConfigInDb = routeConfigRepository.findById(id).orElseThrow();
-        routeConfigInDb.setLastModifyTime(new Date());
-        routeConfigInDb.setActive(routeConfig.getActive());
         routeConfigInDb.setUri(routeConfig.getUri());
         routeConfigInDb.setPredicates(routeConfig.getPredicates());
         routeConfigInDb.setFilters(routeConfig.getFilters());
         routeConfigInDb.setMetadata(routeConfig.getMetadata());
         routeConfigInDb.setRouterOrder(routeConfig.getRouterOrder());
+        routeConfigInDb.setUniauthActive(routeConfig.getUniauthActive());
+        routeConfigInDb.setApp(routeConfig.getApp());
+        routeConfigInDb.setActive(routeConfig.getActive());
         routeConfigInDb = routeConfigRepository.save(routeConfigInDb);
         scheduler.refreshConfig();
         return Mono.just(new ApiResponse<>(routeConfigInDb));
